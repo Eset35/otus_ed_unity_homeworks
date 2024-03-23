@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ShootEmUp
 {
     [RequireComponent(typeof(MoveComponent))]
-    [RequireComponent(typeof(HitPointsComponent))]
+    [RequireComponent(typeof(HitPointComponent))]
     [RequireComponent(typeof(HealthComponent))]
     [RequireComponent(typeof(WeaponComponent))]
     public sealed class CharacterController : MonoBehaviour
@@ -13,7 +13,7 @@ namespace ShootEmUp
         private AbstractInputListener _inputManager; 
         
         private MoveComponent _moveComponent;
-        private HitPointsComponent _hitPointsComponent;
+        private HitPointComponent hitPointComponent;
         private HealthComponent _healthComponent;
         private WeaponComponent _weaponComponent;
 
@@ -24,13 +24,13 @@ namespace ShootEmUp
             _inputManager = FindObjectOfType<AbstractInputListener>();
             
             _moveComponent = gameObject.GetComponent<MoveComponent>();
-            _hitPointsComponent = gameObject.GetComponent<HitPointsComponent>();
+            hitPointComponent = gameObject.GetComponent<HitPointComponent>();
             _healthComponent = gameObject.GetComponent<HealthComponent>();
             _weaponComponent = gameObject.GetComponent<WeaponComponent>();
             
             _inputManager.OnDirectionInput += Move;
             _inputManager.OnShootInput += OnShoot;
-            _hitPointsComponent.OnGetHit += OnGetHit;
+            hitPointComponent.OnGetHit += OnGetHit;
             _healthComponent.OnDead += OnDeath;
         }
 
@@ -38,7 +38,7 @@ namespace ShootEmUp
         {
             _inputManager.OnDirectionInput -= Move;
             _inputManager.OnShootInput -= OnShoot;
-            _hitPointsComponent.OnGetHit -= OnGetHit;
+            hitPointComponent.OnGetHit -= OnGetHit;
             _healthComponent.OnDead -= OnDeath;
         }
 

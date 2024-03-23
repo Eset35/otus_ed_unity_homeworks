@@ -5,7 +5,7 @@ namespace ShootEmUp
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(SpriteRenderer))]
-    public sealed class Bullet : MonoBehaviour
+    public sealed class BulletController : MonoBehaviour
     {
         public struct Args
         {
@@ -31,7 +31,7 @@ namespace ShootEmUp
         
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.TryGetComponent(out HitPointsComponent hitPointsComponent))
+            if (collision.gameObject.TryGetComponent(out HitPointComponent hitPointsComponent))
             {
                 hitPointsComponent.TakeDamage(_damage);
                 Destroy(this.gameObject);

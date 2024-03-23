@@ -4,14 +4,14 @@ using UnityEngine;
 namespace ShootEmUp
 {
     [RequireComponent(typeof(MoveComponent))]
-    [RequireComponent(typeof(HitPointsComponent))]
+    [RequireComponent(typeof(HitPointComponent))]
     [RequireComponent(typeof(HealthComponent))]
     [RequireComponent(typeof(WeaponComponent))]
     public class EnemyController : MonoBehaviour
     {
         private WeaponComponent _weaponComponent;
         private HealthComponent _healthComponent;
-        private HitPointsComponent _hitPointsComponent;
+        private HitPointComponent hitPointComponent;
         private MoveComponent _moveComponent;
 
         private EnemyAttackPositionManager _attackPositionManager;
@@ -32,9 +32,9 @@ namespace ShootEmUp
             _moveComponent = GetComponent<MoveComponent>();
             _weaponComponent = GetComponent<WeaponComponent>();
             _healthComponent = GetComponent<HealthComponent>();
-            _hitPointsComponent = GetComponent<HitPointsComponent>();
+            hitPointComponent = GetComponent<HitPointComponent>();
 
-            _hitPointsComponent.OnGetHit += OnGetHit;
+            hitPointComponent.OnGetHit += OnGetHit;
             _healthComponent.OnDead += OnCharacterDeath;
 
             _attackPositionManager = FindObjectOfType<EnemyAttackPositionManager>();
@@ -49,7 +49,7 @@ namespace ShootEmUp
 
         private void OnDestroy()
         {
-            _hitPointsComponent.OnGetHit -= OnGetHit;
+            hitPointComponent.OnGetHit -= OnGetHit;
             _healthComponent.OnDead -= OnCharacterDeath;
 
             if (_destination != null)

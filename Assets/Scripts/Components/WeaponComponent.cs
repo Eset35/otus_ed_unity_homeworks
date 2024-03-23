@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ShootEmUp
 {
     public sealed class WeaponComponent : MonoBehaviour
     {
         [SerializeField] private BulletConfig _bulletConfig;
-        [SerializeField] private Bullet _bulletPrefab;
+        [FormerlySerializedAs("_bulletPrefab")] [SerializeField] private BulletController bulletControllerPrefab;
 
         public Vector2 Position
         {
@@ -21,8 +22,8 @@ namespace ShootEmUp
 
         public void Shoot(Vector2 direction)
         {
-            Bullet bullet = Instantiate(this._bulletPrefab);
-            Bullet.Args args = new Bullet.Args()
+            BulletController bulletController = Instantiate(this.bulletControllerPrefab);
+            BulletController.Args args = new BulletController.Args()
             {
                 PhysicsLayer = this._bulletConfig.PhysicsLayer,
                 Position = this.Position,
@@ -31,7 +32,7 @@ namespace ShootEmUp
                 Damage = this._bulletConfig.Damage,
             };
             
-            bullet.Init(args);
+            bulletController.Init(args);
         }
     }
 }
