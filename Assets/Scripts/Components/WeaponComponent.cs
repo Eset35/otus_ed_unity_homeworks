@@ -24,11 +24,11 @@ namespace ShootEmUp
             Bullet bullet = Instantiate(this._bulletPrefab);
             Bullet.Args args = new Bullet.Args()
             {
-                PhysicsLayer = this._bulletConfig.physicsLayer,
+                PhysicsLayer = this._bulletConfig.PhysicsLayer,
                 Position = this.Position,
-                Velocity = this.Rotation * direction * this._bulletConfig.speed,
-                Color = this._bulletConfig.color,
-                Damage = this._bulletConfig.damage,
+                Velocity = this.Rotation * direction * this._bulletConfig.Speed,
+                Color = this._bulletConfig.Color,
+                Damage = this._bulletConfig.Damage,
             };
             
             bullet.Init(args);

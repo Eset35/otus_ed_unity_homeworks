@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ShootEmUp
 {
@@ -8,16 +9,25 @@ namespace ShootEmUp
     )]
     public sealed class BulletConfig : ScriptableObject
     {
+        [FormerlySerializedAs("physicsLayer")] [SerializeField]
+        private PhysicsLayer _physicsLayer;
+
+        public PhysicsLayer PhysicsLayer => _physicsLayer;
+        
+        
         [SerializeField]
-        public PhysicsLayer physicsLayer;
+        private Color _color;
+
+        public Color Color => _color;
+        
+        [SerializeField]
+        private int _damage;
+
+        public int Damage => _damage;
 
         [SerializeField]
-        public Color color;
+        private float _speed;
 
-        [SerializeField]
-        public int damage;
-
-        [SerializeField]
-        public float speed;
+        public float Speed => _speed;
     }
 }
