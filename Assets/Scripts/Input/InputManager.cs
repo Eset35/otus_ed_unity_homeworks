@@ -3,24 +3,18 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public abstract class AbstractInputListener : MonoBehaviour
+    public sealed class InputManager : MonoBehaviour
     {
         public Action OnShootInput;
         public Action<DirectionTypeEnum> OnDirectionInput;
-
-        protected abstract void ShootInputHandler();
-        protected abstract void DirectionInputHandler();
-    }
-    
-    public sealed class InputManager : AbstractInputListener
-    {
+        
         private void Update()
         {
             this.ShootInputHandler();
             this.DirectionInputHandler();
         }
 
-        protected override void ShootInputHandler()
+        private void ShootInputHandler()
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -28,7 +22,7 @@ namespace ShootEmUp
             }
         }
 
-        protected override void DirectionInputHandler()
+        private void DirectionInputHandler()
         {
             if (Input.GetKey(KeyCode.LeftArrow))
             {

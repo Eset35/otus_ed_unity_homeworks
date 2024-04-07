@@ -12,11 +12,11 @@ namespace ShootEmUp
         
         public void TakeDamage(int damage)
         {
-            _health -= damage;
+            this._health -= damage;
 
-            if (_health < 0)
+            if (this._health < 0)
             {
-                OnDead?.Invoke();
+                this.OnDead?.Invoke();
             }
         }
     }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -19,7 +18,8 @@ namespace ShootEmUp
         private int _damage;
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private Rigidbody2D _rigidbody2D;
-
+        [SerializeField] private BulletSpawnerManager _bulletSpawnerManager;
+        
         public void Init(Args args)
         {
             this._spriteRenderer.color = args.Color;
@@ -27,6 +27,8 @@ namespace ShootEmUp
             this.gameObject.layer = (int)args.PhysicsLayer;
             this._rigidbody2D.velocity = args.Velocity;
             this._damage = args.Damage;
+
+            this._bulletSpawnerManager = FindObjectOfType<BulletSpawnerManager>();
         }
         
         private void OnCollisionEnter2D(Collision2D collision)
@@ -34,7 +36,7 @@ namespace ShootEmUp
             if (collision.gameObject.TryGetComponent(out HitPointComponent hitPointsComponent))
             {
                 hitPointsComponent.TakeDamage(_damage);
-                Destroy(this.gameObject);
+                this._bulletSpawnerManager.DespawnBullet(this);
             }
         }
     }

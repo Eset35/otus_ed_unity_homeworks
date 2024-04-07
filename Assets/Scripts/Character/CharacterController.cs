@@ -1,5 +1,4 @@
 using System;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -10,10 +9,9 @@ namespace ShootEmUp
     [RequireComponent(typeof(WeaponComponent))]
     public sealed class CharacterController : MonoBehaviour
     {
-        private AbstractInputListener _inputManager; 
-        
+        private InputManager _inputManager; 
         private MoveComponent _moveComponent;
-        private HitPointComponent hitPointComponent;
+        private HitPointComponent _hitPointComponent;
         private HealthComponent _healthComponent;
         private WeaponComponent _weaponComponent;
 
@@ -21,54 +19,45 @@ namespace ShootEmUp
         
         private void Start()
         {
-            _inputManager = FindObjectOfType<AbstractInputListener>();
+            this._inputManager = FindObjectOfType<InputManager>();
             
-            _moveComponent = gameObject.GetComponent<MoveComponent>();
-            hitPointComponent = gameObject.GetComponent<HitPointComponent>();
-            _healthComponent = gameObject.GetComponent<HealthComponent>();
-            _weaponComponent = gameObject.GetComponent<WeaponComponent>();
+            this._moveComponent = this.gameObject.GetComponent<MoveComponent>();
+            this._hitPointComponent = this.gameObject.GetComponent<HitPointComponent>();
+            this._healthComponent = this.gameObject.GetComponent<HealthComponent>();
+            this._weaponComponent = this.gameObject.GetComponent<WeaponComponent>();
             
-            _inputManager.OnDirectionInput += Move;
-            _inputManager.OnShootInput += OnShoot;
-            hitPointComponent.OnGetHit += OnGetHit;
-            _healthComponent.OnDead += OnDeath;
+            this._inputManager.OnDirectionInput += Move;
+            this._inputManager.OnShootInput += OnShoot;
+            this._hitPointComponent.OnGetHit += OnGetHit;
+            this._healthComponent.OnDead += OnDeath;
         }
 
         public void OnDestroy()
         {
-            _inputManager.OnDirectionInput -= Move;
-            _inputManager.OnShootInput -= OnShoot;
-            hitPointComponent.OnGetHit -= OnGetHit;
-            _healthComponent.OnDead -= OnDeath;
+            this._inputManager.OnDirectionInput -= Move;
+            this._inputManager.OnShootInput -= OnShoot;
+            this._hitPointComponent.OnGetHit -= OnGetHit;
+            this._healthComponent.OnDead -= OnDeath;
         }
 
         private void Move(DirectionTypeEnum directionTypeEnum)
         {
-            if (directionTypeEnum == DirectionTypeEnum.Left)
-            {
-                Vector2 dirVector = new Vector2(-1, 0) * Time.fixedDeltaTime;
-                _moveComponent.MoveByRigidbodyVelocity(dirVector);
-            }
-            else
-            {
-                Vector2 dirVector = new Vector2(1, 0) * Time.fixedDeltaTime;
-                _moveComponent.MoveByRigidbodyVelocity(dirVector);
-            }
+            this._moveComponent.Move(directionTypeEnum);
         }
 
         private void OnGetHit(int damage)
         {
-            _healthComponent.TakeDamage(damage);
+            this._healthComponent.TakeDamage(damage);
         }
 
         private void OnShoot()
         {
-            _weaponComponent.Shoot(Vector2.up);
+            this._weaponComponent.Shoot(Vector2.up);
         }
 
         private void OnDeath()
         {
-            OnKilled?.Invoke();
+            this.OnKilled?.Invoke();
             Destroy(this.gameObject);
         }
     }

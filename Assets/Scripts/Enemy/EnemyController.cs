@@ -3,95 +3,113 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    [RequireComponent(typeof(MoveComponent))]
     [RequireComponent(typeof(HitPointComponent))]
     [RequireComponent(typeof(HealthComponent))]
     [RequireComponent(typeof(WeaponComponent))]
-    public class EnemyController : MonoBehaviour
+    public sealed class EnemyController : MonoBehaviour
     {
         private WeaponComponent _weaponComponent;
         private HealthComponent _healthComponent;
-        private HitPointComponent hitPointComponent;
+        private HitPointComponent _hitPointComponent;
         private MoveComponent _moveComponent;
 
         private EnemyAttackPositionManager _attackPositionManager;
         private CharacterController _characterController;
-
         [SerializeField] private float _fireRate;
 
         private float _currentTime;
 
         private Transform _destination;
-        private bool _isReached;
+        private bool _isReachedAttackPosition;
 
-        public event Action OnKilled;
-
+        public Action<EnemyController> OnKilled;
+        
         private void Start()
         {
-            _characterController = FindObjectOfType<CharacterController>();
-            _moveComponent = GetComponent<MoveComponent>();
-            _weaponComponent = GetComponent<WeaponComponent>();
-            _healthComponent = GetComponent<HealthComponent>();
-            hitPointComponent = GetComponent<HitPointComponent>();
+            this._characterController = FindObjectOfType<CharacterController>();
+            this._moveComponent = GetComponent<MoveComponent>();
+            this._weaponComponent = GetComponent<WeaponComponent>();
+            this._healthComponent = GetComponent<HealthComponent>();
+            this._hitPointComponent = GetComponent<HitPointComponent>();
 
-            hitPointComponent.OnGetHit += OnGetHit;
-            _healthComponent.OnDead += OnCharacterDeath;
+            this._hitPointComponent.OnGetHit += OnGetHit;
+            this._healthComponent.OnDead += OnCharacterDeath;
+        }
 
-            _attackPositionManager = FindObjectOfType<EnemyAttackPositionManager>();
-
-            if (!_attackPositionManager.TryGetRandomAttackPosition(out Transform attackPosition))
+        public void StartAttack()
+        {
+            if (this._attackPositionManager == null)
             {
-                Destroy(this.gameObject);
+                this._attackPositionManager = FindObjectOfType<EnemyAttackPositionManager>();
+            }
+            
+            if (!this._attackPositionManager.TryGetRandomAttackPosition(out Transform attackPosition))
+            {
+                Destroy(gameObject);
             }
 
-            _destination = attackPosition;
+            this._isReachedAttackPosition = false;
+            this._destination = attackPosition;
         }
 
         private void OnDestroy()
         {
-            hitPointComponent.OnGetHit -= OnGetHit;
-            _healthComponent.OnDead -= OnCharacterDeath;
+            this._hitPointComponent.OnGetHit -= OnGetHit;
+            this._healthComponent.OnDead -= OnCharacterDeath;
 
-            if (_destination != null)
+            if (this._destination != null)
             {
-                _attackPositionManager.FreeAttackPosition(_destination);
+                this._attackPositionManager.FreeAttackPosition(this._destination);
             }
         }
 
         private void OnGetHit(int damage)
         {
-            _healthComponent.TakeDamage(damage);
+            this._healthComponent.TakeDamage(damage);
         }
 
         private void OnCharacterDeath()
         {
-            OnKilled?.Invoke();
-            Destroy(this.gameObject);
+            this._attackPositionManager.FreeAttackPosition(this._destination);
+            this.OnKilled?.Invoke(this);
         }
 
         private void FixedUpdate()
         {
-            if (!this._isReached)
+            if (!this._isReachedAttackPosition)
             {
-                Vector2 vector = (Vector2)this._destination.transform.position - (Vector2)this.transform.position;
-                if (vector.magnitude <= 0.25f)
-                {
-                    this._isReached = true;
-                    return;
-                }
-
-                var direction = vector.normalized * Time.fixedDeltaTime;
-                this._moveComponent.MoveByRigidbodyVelocity(direction);
-
+                MoveToAttackPosition();
                 return;
             }
 
+            Attack();
+        }
 
+        private void Attack()
+        {
             this._currentTime -= Time.fixedDeltaTime;
             if (this._currentTime <= 0)
             {
                 this.OnShoot();
                 this._currentTime += this._fireRate;
+            }
+        }
+        
+        private void MoveToAttackPosition()
+        {
+            if (!this._isReachedAttackPosition && _destination != null)
+            {
+                Vector2 vector = (Vector2)this._destination.transform.position - (Vector2)this.transform.position;
+                if (vector.magnitude <= 0.25f)
+                {
+                    this._isReachedAttackPosition = true;
+                    return;
+                }
+
+                var direction = vector.normalized * Time.fixedDeltaTime;
+                this._moveComponent.Move(direction);
+
+                return;
             }
         }
 

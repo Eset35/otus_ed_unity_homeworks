@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace ShootEmUp
@@ -12,10 +11,22 @@ namespace ShootEmUp
 
         private void Start()
         {
-            _rigidbody2D = GetComponent<Rigidbody2D>();
+            this._rigidbody2D = GetComponent<Rigidbody2D>();
         }
 
-        public void MoveByRigidbodyVelocity(Vector2 vector)
+        public void Move(DirectionTypeEnum directionTypeEnum)
+        {
+            if (directionTypeEnum == DirectionTypeEnum.Left)
+            {
+                Move(new Vector2(-1, 0) * Time.fixedDeltaTime);
+            }
+            else
+            {
+                Move(new Vector2(1, 0) * Time.fixedDeltaTime);
+            }
+        }
+        
+        public void Move(Vector2 vector)
         {
             var nextPosition = this._rigidbody2D.position + vector * this._speed;
             this._rigidbody2D.MovePosition(nextPosition);

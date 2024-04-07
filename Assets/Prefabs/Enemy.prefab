@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bulletConfig: {fileID: 11400000, guid: 80b7c55eef8df0541b037864c46da12e, type: 2}
-  _bulletPrefab: {fileID: 201757604187811891, guid: 5fe72886874b4e445b06cf777ca4920d,
+  bulletControllerPrefab: {fileID: 201757604187811891, guid: 5fe72886874b4e445b06cf777ca4920d,
     type: 3}
   firePoint: {fileID: 3195880656587174614}
 --- !u!114 &2383236617011676918
