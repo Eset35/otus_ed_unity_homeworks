@@ -25,10 +25,5 @@ namespace ShootEmUp
         {
             this.gameObject.SetActive(state);
         }
-
-        public bool IsThisPool(PoolContainer container)
-        {
-            return _pool == container;
-        }
     }
 }

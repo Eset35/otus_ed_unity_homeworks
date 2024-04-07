@@ -5,7 +5,7 @@ namespace ShootEmUp
 {
     public sealed class PoolContainer : MonoBehaviour
     {
-        private readonly Stack<PoolObject> _pool = new Stack<PoolObject>(25);
+        private Stack<PoolObject> _pool;
         [SerializeField] private GameObject _prefab;
 
         public PoolObject Get()
@@ -17,12 +17,17 @@ namespace ShootEmUp
 
             PoolObject poolObject;
 
-            if (this._pool.Count > 0)
+            if (this._pool != null && this._pool?.Count > 0)
             {
                 poolObject = this._pool.Pop();
             }
             else
             {
+                if (this._pool == null)
+                {
+                    this._pool = new Stack<PoolObject>();
+                }
+                
                 GameObject go = Instantiate(this._prefab);
                 go.transform.SetParent(this.gameObject.transform);
                 
@@ -36,7 +41,7 @@ namespace ShootEmUp
 
         public void Delete(PoolObject poolObject)
         {
-            if (poolObject != null && poolObject.IsThisPool(this))
+            if (poolObject != null)
             {
                 poolObject.SetActive(false);
                 poolObject.transform.SetParent(this.gameObject.transform);
