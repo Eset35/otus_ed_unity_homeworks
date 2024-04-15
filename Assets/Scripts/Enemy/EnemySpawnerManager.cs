@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using ShootEmUp.Common.Pool;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Enemy
 {
     public sealed class EnemySpawnerManager : MonoBehaviour
     {
         [SerializeField] private EnemyDeathObserver _enemyDeathObserver;
         [SerializeField] private List<Transform> _enemiesSpawnPosition;
         [SerializeField] private int _maxEnemiesCounter;
-        [SerializeField] private PoolContainer _enemyContainer;
         [SerializeField] private Transform _worldPosition;
+        [SerializeField] private EnemyController _enemyPrefab;
         
         private int _enemiesCounter;
 
@@ -21,14 +22,19 @@ namespace ShootEmUp
             }
         }
         
-        public void SpawnEnemy()
+        private void SpawnEnemy()
         {
             if (this._enemiesCounter >= this._maxEnemiesCounter)
             {
                 return;
             }
 
-            EnemyController enemy = this._enemyContainer.Get().GetComponent<EnemyController>();
+            EnemyController enemy = UnifiedPool.GetObject<EnemyController>(() => Instantiate(_enemyPrefab), enemy =>
+            {
+                enemy.gameObject.SetActive(true);
+                return null;
+            });
+
             this._enemiesCounter++;
             enemy.transform.SetParent(this._worldPosition);
 
@@ -42,7 +48,12 @@ namespace ShootEmUp
         
         public void DespawnEnemy(EnemyController enemyController)
         {
-            this._enemyContainer.Delete(enemyController.GetComponent<PoolObject>());
+            UnifiedPool.ReleaseObj<EnemyController>(enemyController, enemy=>
+            {
+                enemy.gameObject.SetActive(false);
+                return null;
+            });
+            
             this._enemiesCounter--;
             SpawnEnemy();
         }

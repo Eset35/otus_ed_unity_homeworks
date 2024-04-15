@@ -1,6 +1,8 @@
+using ShootEmUp.Common.Physics;
+using ShootEmUp.Components;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Bullet
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(SpriteRenderer))]
@@ -33,11 +35,13 @@ namespace ShootEmUp
         
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.TryGetComponent(out HitPointComponent hitPointsComponent))
+            if (!collision.gameObject.TryGetComponent(out HitPointComponent hitPointsComponent))
             {
-                hitPointsComponent.TakeDamage(_damage);
-                this._bulletSpawnerManager.DespawnBullet(this);
+                return;
             }
+            
+            hitPointsComponent.TakeDamage(_damage);
+            this._bulletSpawnerManager.DespawnBullet(this);
         }
     }
 }

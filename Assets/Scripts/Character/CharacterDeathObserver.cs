@@ -1,18 +1,19 @@
+using ShootEmUp.GameCycle;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Character
 {
     public class CharacterDeathObserver : MonoBehaviour
     {
         [SerializeField]
         private GameCycleController _gameCycleController;
 
-        public void AddCharacter(CharacterController controller)
+        public void AddCharacter(PlayerCharacterController controller)
         {
             controller.OnKilled += OnCharacterDeath;
         }
-        
-        public void OnCharacterDeath()
+
+        private void OnCharacterDeath()
         {
             this._gameCycleController.FinishGame();
         }

@@ -1,15 +1,23 @@
+using ShootEmUp.Common.Pool;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Bullet
 {
     public sealed class BulletSpawnerManager : MonoBehaviour
     {
-        [SerializeField] private PoolContainer _bulletContainer;
         [SerializeField] private Transform _worldTransform;
+        [SerializeField] private BulletController _bulletPrefab;
         
         public void Spawn(BulletConfig bulletConfig, Transform transform, Vector2 direction)
         {
-            BulletController bulletController = this._bulletContainer.Get().GetComponent<BulletController>();
+            BulletController bulletController = UnifiedPool.GetObject<BulletController>(
+                () => Instantiate(_bulletPrefab),
+                bullet =>
+                {
+                    bullet.gameObject.SetActive(true);
+                    return null;
+                });
+            
             bulletController.gameObject.transform.parent = _worldTransform;
             
             BulletController.Args args = new BulletController.Args()
@@ -26,7 +34,11 @@ namespace ShootEmUp
 
         public void DespawnBullet(BulletController bulletController)
         {
-            this._bulletContainer.Delete(bulletController.GetComponent<PoolObject>());
+            UnifiedPool.ReleaseObj(bulletController, bullet =>
+            {
+                bullet.gameObject.SetActive(false);
+                return null;
+            });
         }
     }
 }

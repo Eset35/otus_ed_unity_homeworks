@@ -1,18 +1,13 @@
+using ShootEmUp.Bullet;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Components
 {
     public sealed class WeaponComponent : MonoBehaviour
     {
-        public Vector2 Position
-        {
-            get { return this.firePoint.position; }
-        }
+        public Vector2 Position => this.firePoint.position;
 
-        public Quaternion Rotation
-        {
-            get { return this.firePoint.rotation; }
-        }
+        public Quaternion Rotation => this.firePoint.rotation;
 
         private BulletSpawnerManager _bulletSpawnerManager;
         [SerializeField] private BulletConfig _bulletConfig;

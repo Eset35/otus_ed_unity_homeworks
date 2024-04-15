@@ -1,13 +1,16 @@
 using System;
+using ShootEmUp.Common.Input;
+using ShootEmUp.Components;
+using ShootEmUp.Input;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Character
 {
     [RequireComponent(typeof(MoveComponent))]
     [RequireComponent(typeof(HitPointComponent))]
     [RequireComponent(typeof(HealthComponent))]
     [RequireComponent(typeof(WeaponComponent))]
-    public sealed class CharacterController : MonoBehaviour
+    public sealed class PlayerCharacterController : MonoBehaviour
     {
         private InputManager _inputManager; 
         private MoveComponent _moveComponent;

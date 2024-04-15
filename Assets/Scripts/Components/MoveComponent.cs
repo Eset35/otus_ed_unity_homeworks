@@ -1,6 +1,7 @@
+using ShootEmUp.Common.Input;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Components
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public sealed class MoveComponent : MonoBehaviour
@@ -25,7 +26,7 @@ namespace ShootEmUp
                 Move(new Vector2(1, 0) * Time.fixedDeltaTime);
             }
         }
-        
+    
         public void Move(Vector2 vector)
         {
             var nextPosition = this._rigidbody2D.position + vector * this._speed;

@@ -1,6 +1,8 @@
+using ShootEmUp.Character;
+using ShootEmUp.Enemy;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.GameCycle
 {
     public sealed class GameCycleController : MonoBehaviour
     {

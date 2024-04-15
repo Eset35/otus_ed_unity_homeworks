@@ -1,10 +1,10 @@
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Character
 {
     public class CharacterSpawnerManager : MonoBehaviour
-    {
-        [SerializeField] private CharacterController _characterPrefab;
+    { 
+        [SerializeField] private PlayerCharacterController _playerCharacterPrefab;
         [SerializeField] private CharacterDeathObserver _characterDeathObserver;
         
         [SerializeField] private Transform _characterSpawnPosition;
@@ -12,10 +12,9 @@ namespace ShootEmUp
         
         public void SpawnCharacter()
         {
-            CharacterController character = Instantiate(this._characterPrefab);
-            character.transform.parent = this._worldPosition.gameObject.transform;
-            character.transform.position = this._characterSpawnPosition.transform.position;
-            this._characterDeathObserver.AddCharacter(character);
+            PlayerCharacterController playerCharacter = Instantiate(this._playerCharacterPrefab, this._worldPosition.gameObject.transform, true);
+            playerCharacter.transform.position = this._characterSpawnPosition.transform.position;
+            this._characterDeathObserver.AddCharacter(playerCharacter);
         }
     }
 }

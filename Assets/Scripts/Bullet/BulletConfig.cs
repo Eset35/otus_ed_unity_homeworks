@@ -1,15 +1,15 @@
+using ShootEmUp.Common.Physics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace ShootEmUp
+namespace ShootEmUp.Bullet
 {
     [CreateAssetMenu(
         fileName = "BulletConfig",
         menuName = "Bullets/New BulletConfig"
     )]
     public sealed class BulletConfig : ScriptableObject
-    {
-        [FormerlySerializedAs("physicsLayer")] [SerializeField]
+    { 
+        [SerializeField]
         private PhysicsLayer _physicsLayer;
 
         public PhysicsLayer PhysicsLayer => _physicsLayer;

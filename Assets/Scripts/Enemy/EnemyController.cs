@@ -1,7 +1,9 @@
 using System;
+using ShootEmUp.Components;
+using ShootEmUp.Character;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Enemy
 {
     [RequireComponent(typeof(HitPointComponent))]
     [RequireComponent(typeof(HealthComponent))]
@@ -14,7 +16,7 @@ namespace ShootEmUp
         private MoveComponent _moveComponent;
 
         private EnemyAttackPositionManager _attackPositionManager;
-        private CharacterController _characterController;
+        private PlayerCharacterController _playerCharacterController;
         [SerializeField] private float _fireRate;
 
         private float _currentTime;
@@ -26,7 +28,7 @@ namespace ShootEmUp
         
         private void Start()
         {
-            this._characterController = FindObjectOfType<CharacterController>();
+            this._playerCharacterController = FindObjectOfType<PlayerCharacterController>();
             this._moveComponent = GetComponent<MoveComponent>();
             this._weaponComponent = GetComponent<WeaponComponent>();
             this._healthComponent = GetComponent<HealthComponent>();
@@ -88,35 +90,37 @@ namespace ShootEmUp
         private void Attack()
         {
             this._currentTime -= Time.fixedDeltaTime;
-            if (this._currentTime <= 0)
+            if (!(this._currentTime <= 0))
             {
-                this.OnShoot();
-                this._currentTime += this._fireRate;
+                return;
             }
+            
+            this.OnShoot();
+            this._currentTime += this._fireRate;
         }
         
         private void MoveToAttackPosition()
         {
-            if (!this._isReachedAttackPosition && _destination != null)
+            if (this._isReachedAttackPosition || _destination == null)
             {
-                Vector2 vector = (Vector2)this._destination.transform.position - (Vector2)this.transform.position;
-                if (vector.magnitude <= 0.25f)
-                {
-                    this._isReachedAttackPosition = true;
-                    return;
-                }
-
-                var direction = vector.normalized * Time.fixedDeltaTime;
-                this._moveComponent.Move(direction);
-
                 return;
             }
+            
+            Vector2 vector = (Vector2)this._destination.transform.position - (Vector2)this.transform.position;
+            if (vector.magnitude <= 0.25f)
+            {
+                this._isReachedAttackPosition = true;
+                return;
+            }
+
+            var direction = vector.normalized * Time.fixedDeltaTime;
+            this._moveComponent.Move(direction);
         }
 
         private void OnShoot()
         {
             var startPosition = this._weaponComponent.Position;
-            var vector = (Vector2)this._characterController.gameObject.transform.position - startPosition;
+            var vector = (Vector2)this._playerCharacterController.gameObject.transform.position - startPosition;
             var direction = vector.normalized;
             this._weaponComponent.Shoot(direction);
         }

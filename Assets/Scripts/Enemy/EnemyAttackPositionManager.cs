@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace ShootEmUp
+namespace ShootEmUp.Enemy
 {
     public sealed class EnemyAttackPositionManager : MonoBehaviour
     {
@@ -16,10 +16,7 @@ namespace ShootEmUp
         
         public bool TryGetRandomAttackPosition(out Transform attackPosition)
         {
-            if (this._attackPositionsList == null)
-            {
-                this._attackPositionsList = this._attackPositions.ToList();
-            }
+            this._attackPositionsList ??= this._attackPositions.ToList();
             
             if (this._attackPositionsList.Count > 0)
             {

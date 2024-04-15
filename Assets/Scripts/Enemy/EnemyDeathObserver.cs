@@ -1,19 +1,20 @@
-using ShootEmUp;
 using UnityEngine;
 
-public sealed class EnemyDeathObserver : MonoBehaviour
+namespace ShootEmUp.Enemy
 {
-    [SerializeField]
-    private EnemySpawnerManager _enemySpawnerManager;
-
-    public void AddEnemy(EnemyController enemyController)
+    public sealed class EnemyDeathObserver : MonoBehaviour
     {
-        enemyController.OnKilled += OnEnemyDeath;
-    }
+        [SerializeField] private EnemySpawnerManager _enemySpawnerManager;
 
-    public void OnEnemyDeath(EnemyController enemyController)
-    {
-        enemyController.OnKilled -= OnEnemyDeath;
-        this._enemySpawnerManager.DespawnEnemy(enemyController);
+        public void AddEnemy(EnemyController enemyController)
+        {
+            enemyController.OnKilled += OnEnemyDeath;
+        }
+
+        private void OnEnemyDeath(EnemyController enemyController)
+        {
+            enemyController.OnKilled -= OnEnemyDeath;
+            this._enemySpawnerManager.DespawnEnemy(enemyController);
+        }
     }
 }
