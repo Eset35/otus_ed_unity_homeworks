@@ -19,8 +19,8 @@ namespace ShootEmUp.Character
         private WeaponComponent _weaponComponent;
 
         public Action OnKilled;
-        
-        private void Start()
+
+        public void Init()
         {
             this._inputManager = FindObjectOfType<InputManager>();
             
@@ -33,9 +33,11 @@ namespace ShootEmUp.Character
             this._inputManager.OnShootInput += OnShoot;
             this._hitPointComponent.OnGetHit += OnGetHit;
             this._healthComponent.OnDead += OnDeath;
+            
+            this._healthComponent.Reset();
         }
 
-        public void OnDestroy()
+        public void DeInit()
         {
             this._inputManager.OnDirectionInput -= Move;
             this._inputManager.OnShootInput -= OnShoot;
@@ -61,7 +63,6 @@ namespace ShootEmUp.Character
         private void OnDeath()
         {
             this.OnKilled?.Invoke();
-            Destroy(this.gameObject);
         }
     }
 }

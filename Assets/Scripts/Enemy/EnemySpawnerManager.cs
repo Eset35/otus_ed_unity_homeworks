@@ -1,19 +1,23 @@
 using System.Collections.Generic;
+using ShootEmUp.Common;
 using ShootEmUp.Common.Pool;
+using ShootEmUp.GameCycle.Models;
 using UnityEngine;
 
 namespace ShootEmUp.Enemy
 {
-    public sealed class EnemySpawnerManager : MonoBehaviour
+    public sealed class EnemySpawnerManager : MonoBehaviour, IGameStartListener, IGameEndListener
     {
         [SerializeField] private EnemyDeathObserver _enemyDeathObserver;
         [SerializeField] private List<Transform> _enemiesSpawnPosition;
-        [SerializeField] private int _maxEnemiesCounter;
         [SerializeField] private Transform _worldPosition;
         [SerializeField] private EnemyController _enemyPrefab;
         
-        private int _enemiesCounter;
-
+        private void Start()
+        {
+            IGameEventListener.Register(this);
+        }
+        
         public void SpawnEnemy(uint enemyNumber = 6)
         {
             for (int i = 0; i < enemyNumber; i++)
@@ -24,18 +28,12 @@ namespace ShootEmUp.Enemy
         
         private void SpawnEnemy()
         {
-            if (this._enemiesCounter >= this._maxEnemiesCounter)
-            {
-                return;
-            }
-
-            EnemyController enemy = UnifiedPool.GetObject<EnemyController>(() => Instantiate(_enemyPrefab), enemy =>
+            EnemyController enemy = UnifiedPool.GetObject<EnemyController>(() => Instantiate(this._enemyPrefab), enemy =>
             {
                 enemy.gameObject.SetActive(true);
                 return null;
             });
-
-            this._enemiesCounter++;
+            
             enemy.transform.SetParent(this._worldPosition);
 
             int index = Random.Range(0, this._enemiesSpawnPosition.Count);
@@ -43,6 +41,7 @@ namespace ShootEmUp.Enemy
             
             this._enemyDeathObserver.AddEnemy(enemy);
             
+            enemy.Init();
             enemy.StartAttack();
         }
         
@@ -50,12 +49,25 @@ namespace ShootEmUp.Enemy
         {
             UnifiedPool.ReleaseObj<EnemyController>(enemyController, enemy=>
             {
+                enemy.DeInit();
                 enemy.gameObject.SetActive(false);
                 return null;
             });
-            
-            this._enemiesCounter--;
-            SpawnEnemy();
+        }
+
+        public void OnGameStart()
+        {
+            this.SpawnEnemy(6);
+        }
+
+        public void OnGameEnd()
+        {
+            EnemyController[] enemies = GameObject.FindObjectsOfType<EnemyController>();
+        
+            foreach (var enemy in enemies)
+            {
+                DespawnEnemy(enemy);
+            }
         }
     }
 }

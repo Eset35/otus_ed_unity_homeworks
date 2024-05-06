@@ -15,6 +15,7 @@ namespace ShootEmUp.Enemy
         {
             enemyController.OnKilled -= OnEnemyDeath;
             this._enemySpawnerManager.DespawnEnemy(enemyController);
+            this._enemySpawnerManager.SpawnEnemy(1);
         }
     }
 }

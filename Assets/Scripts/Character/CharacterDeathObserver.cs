@@ -5,8 +5,7 @@ namespace ShootEmUp.Character
 {
     public class CharacterDeathObserver : MonoBehaviour
     {
-        [SerializeField]
-        private GameCycleController _gameCycleController;
+        [SerializeField] private GameCycleStateMachine gameCycleStateMachine;
 
         public void AddCharacter(PlayerCharacterController controller)
         {
@@ -15,7 +14,7 @@ namespace ShootEmUp.Character
 
         private void OnCharacterDeath()
         {
-            this._gameCycleController.FinishGame();
+            this.gameCycleStateMachine.EndGame();
         }
     }
 }

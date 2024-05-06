@@ -2,13 +2,14 @@ using System;
 using ShootEmUp.Components;
 using ShootEmUp.Character;
 using UnityEngine;
+using ShootEmUp.GameCycle.Models;
 
 namespace ShootEmUp.Enemy
 {
     [RequireComponent(typeof(HitPointComponent))]
     [RequireComponent(typeof(HealthComponent))]
     [RequireComponent(typeof(WeaponComponent))]
-    public sealed class EnemyController : MonoBehaviour
+    public sealed class EnemyController : MonoBehaviour, IGameFixedTickableListener
     {
         private WeaponComponent _weaponComponent;
         private HealthComponent _healthComponent;
@@ -25,21 +26,27 @@ namespace ShootEmUp.Enemy
         private bool _isReachedAttackPosition;
 
         public Action<EnemyController> OnKilled;
-        
-        private void Start()
+
+        public void Init()
         {
             this._playerCharacterController = FindObjectOfType<PlayerCharacterController>();
             this._moveComponent = GetComponent<MoveComponent>();
             this._weaponComponent = GetComponent<WeaponComponent>();
             this._healthComponent = GetComponent<HealthComponent>();
             this._hitPointComponent = GetComponent<HitPointComponent>();
+            this._healthComponent.Reset();
+        }
 
-            this._hitPointComponent.OnGetHit += OnGetHit;
-            this._healthComponent.OnDead += OnCharacterDeath;
+        private void Start()
+        {
+            IGameFixedTickableListener.Register(this);
         }
 
         public void StartAttack()
         {
+            this._hitPointComponent.OnGetHit += OnGetHit;
+            this._healthComponent.OnDead += OnCharacterDeath;
+            
             if (this._attackPositionManager == null)
             {
                 this._attackPositionManager = FindObjectOfType<EnemyAttackPositionManager>();
@@ -54,11 +61,11 @@ namespace ShootEmUp.Enemy
             this._destination = attackPosition;
         }
 
-        private void OnDestroy()
+        public void DeInit()
         {
             this._hitPointComponent.OnGetHit -= OnGetHit;
             this._healthComponent.OnDead -= OnCharacterDeath;
-
+            
             if (this._destination != null)
             {
                 this._attackPositionManager.FreeAttackPosition(this._destination);
@@ -72,11 +79,10 @@ namespace ShootEmUp.Enemy
 
         private void OnCharacterDeath()
         {
-            this._attackPositionManager.FreeAttackPosition(this._destination);
             this.OnKilled?.Invoke(this);
         }
 
-        private void FixedUpdate()
+        public void FixedTick()
         {
             if (!this._isReachedAttackPosition)
             {

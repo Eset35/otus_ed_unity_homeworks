@@ -1,18 +1,18 @@
 using System;
 using ShootEmUp.Common.Input;
+using ShootEmUp.GameCycle.Models;
 using UnityEngine;
 
 namespace ShootEmUp.Input
 {
-    public sealed class InputManager : MonoBehaviour
+    public sealed class InputManager : MonoBehaviour, IGameTickableListener
     {
         public Action OnShootInput;
         public Action<DirectionTypeEnum> OnDirectionInput;
-        
-        private void Update()
+
+        private void Start()
         {
-            this.ShootInputHandler();
-            this.DirectionInputHandler();
+            IGameTickableListener.Register(this);
         }
 
         private void ShootInputHandler()
@@ -33,6 +33,12 @@ namespace ShootEmUp.Input
             {
                 this.OnDirectionInput?.Invoke(DirectionTypeEnum.Right);
             }
+        }
+
+        public void Tick()
+        {
+            this.ShootInputHandler();
+            this.DirectionInputHandler();
         }
     }
 }

@@ -1,9 +1,11 @@
 using System;
+using ShootEmUp.Common;
+using ShootEmUp.GameCycle.Models;
 using UnityEngine;
 
 namespace ShootEmUp.Level
 {
-    public sealed class LevelBackground : MonoBehaviour
+    public sealed class LevelBackground : MonoBehaviour, IGameFixedTickableListener
     {
         private float _startPositionY;
 
@@ -22,6 +24,7 @@ namespace ShootEmUp.Level
 
         private void Awake()
         {
+            IGameTickListener.Register(this);
             this._startPositionY = this._params.StartPositionY;
             this._endPositionY = this._params.EndPositionY;
             this._movingSpeedY = this._params._movingSpeedY;
@@ -31,7 +34,21 @@ namespace ShootEmUp.Level
             this._positionZ = position.z;
         }
 
-        private void FixedUpdate()
+        [Serializable]
+        public sealed class Params
+        {
+            [SerializeField] private float _startPositionY;
+            public float StartPositionY => _startPositionY;
+
+            [SerializeField] private float _endPositionY;
+            public float EndPositionY => _endPositionY;
+
+            [SerializeField] public float _movingSpeedY;
+
+            public float MovingSpeedY => _movingSpeedY;
+        }
+
+        public void FixedTick()
         {
             if (this._myTransform.position.y <= this._endPositionY)
             {
@@ -47,20 +64,6 @@ namespace ShootEmUp.Level
                 this._movingSpeedY * Time.fixedDeltaTime,
                 this._positionZ
             );
-        }
-
-        [Serializable]
-        public sealed class Params
-        {
-            [SerializeField] private float _startPositionY;
-            public float StartPositionY => _startPositionY;
-
-            [SerializeField] private float _endPositionY;
-            public float EndPositionY => _endPositionY;
-
-            [SerializeField] public float _movingSpeedY;
-
-            public float MovingSpeedY => _movingSpeedY;
         }
     }
 }
